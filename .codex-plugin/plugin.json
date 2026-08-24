@@ -1,7 +1,7 @@
 {
   "name": "prompt-skills",
   "version": "0.1.0",
-  "description": "提示词工程技能包：交付 Loop/Graph 设计器（loop-graph-designer）+ 项目宪法生成器（constitution-generator）。",
+  "description": "提示词工程技能包：交付 Loop/Graph 设计器（loop-graph-designer）+ 项目宪法生成器（constitution-generator）+ 会话交接器（session-handoff）。",
   "author": {
     "name": "prompt-skills contributors"
   },
