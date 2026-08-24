@@ -20,10 +20,12 @@
 
 | 平台 | 插件清单 | 技能发现路径 | 安装方式 |
 | --- | --- | --- | --- |
-| zcode | `.zcode-plugin/plugin.json` | 插件表 Settings → Plugin Management 添加本仓库（本地目录 / git 仓库） | 插件管理添加仓库即自动发现 `skills/` |
+| zcode | `.zcode-plugin/plugin.json` | 设置 → 插件 → 创建 → 添加插件市场，填仓库地址（仓库根含 `marketplace.json`） | 市场添加成功后在「个人」分段安装 `prompt-skills` 插件，即获得两个技能 |
 | claude code | `.claude-plugin/plugin.json` | 插件安装后自动注册 | `/plugin marketplace add <本仓库路径>` 或直接安装 `.claude-plugin` 目录 |
 | codex | `.codex-plugin/plugin.json` | 插件机制（v0.146+ 支持插件；技能亦可直接放入 `~/.codex/skills/`） | 按 Codex 插件安装指引添加本仓库 |
 | kimi（Kimi Code CLI） | 无需清单（Skills 按标准路径发现） | `~/.kimi/skills/`、`~/.claude/skills/`、`~/.codex/skills/`、`~/.agents/skills/`、`~/.config/agents/skills/` 之一 | 将 `skills/loop-graph-designer/` 复制到任一发现路径；或用 `--skills-dir` 指向本仓库 `skills/` |
+
+> 本仓库是「一个插件（prompt-skills）+ 一个市场（prompt）」形态：仓库根 `marketplace.json` 为 zcode 市场清单（`.claude-plugin/marketplace.json` 供 claude code 市场使用），市场条目以 `source: "./"` 指向仓库根（插件本体，`skills/` 内含全部技能）。以 git 仓库或本地目录方式添加市场时，客户端均先校验该市场清单。
 
 > kimi 的 `plugin.json` 仅用于声明可执行工具；本技能为纯知识型（无需工具），因此不提供 kimi 工具插件清单，按技能方式安装即可。
 
