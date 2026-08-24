@@ -1,0 +1,10 @@
+{
+  "name": "prompt-skills",
+  "version": "0.1.0",
+  "description": "提示词工程技能包：当前包含交付 Loop/Graph 设计器（loop-graph-designer），基于需求或 spec 产出生产规范化执行文档。",
+  "author": {
+    "name": "prompt-skills contributors"
+  },
+  "license": "MIT",
+  "skills": "skills"
+}
