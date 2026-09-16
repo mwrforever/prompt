@@ -1,6 +1,6 @@
 # 风格示例（分层宪法文档体系）
 
-> agent 模式样例（AGENTS.md 宪法实体 + CLAUDE.md 根索引）；claude 模式命名整体对调。章节骨架与填写规则见 `template.md`；`{...}` 生成时替换为目标项目实测事实，项目专属内容（定位、目录、技术栈版本）禁止照抄。
+> agent 模式样例（AGENTS.md 宪法实体 + CLAUDE.md 根索引）；claude 模式命名整体对调。章节骨架与填写规则见 `template.md`；`{...}` 生成时替换为目标项目实测事实，项目专属内容（定位、目录、技术栈版本）禁止照抄。全篇仅约束表述（禁令 / 必须 / 边界），无功能项实现描述。
 
 ---
 
@@ -136,12 +136,12 @@ make test     # 全栈测试
 # Part B — 架构分层
 
 ## B.1 目录职责边界
-| 目录                | 边界                                         |
-|---------------------|----------------------------------------------|
-| `app/api/`          | 路由层：解析 + 校验 + 调 service，禁止业务逻辑 |
-| `app/services/`     | 业务逻辑与事务边界                            |
-| `app/repositories/` | 数据访问：单表 / 关联查询，禁止业务逻辑       |
-| `app/agents/`       | agent 编排：调 service 与网关，禁直接操作 DB  |
+```text
+app/api/           # 路由层：解析 + 校验 + 调 service，禁业务逻辑
+app/services/      # 业务逻辑与事务边界
+app/repositories/  # 数据访问：单表 / 关联查询，禁业务逻辑
+app/agents/        # agent 编排：调 service 与网关，禁直接操作 DB
+```
 
 ## B.2 层级依赖（强制）
 ```
@@ -177,13 +177,13 @@ agents -> services / llm
 （backend 内部 tree：入口、app/ 各层目录、tests/；根目录地图归定位层，不在此重复。）
 
 ## C.4 常用命令
-| 命令                                   | 用途     |
-|----------------------------------------|----------|
-| `uv run uvicorn app.main:app --reload` | 本地启动 |
-| `uv run pytest`                        | 测试     |
-| `uv run ruff format .`                 | 格式化   |
-| `uv run ruff check --fix .`            | lint 修复 |
-| `uv run alembic upgrade head`          | 数据库迁移 |
+```bash
+uv run uvicorn app.main:app --reload    # 本地启动
+uv run pytest                           # 测试
+uv run ruff format .                    # 格式化
+uv run ruff check --fix .               # lint 修复
+uv run alembic upgrade head             # 数据库迁移
+```
 
 ## C.5 CI 生产落地方案
 1. GitHub Actions：push / PR 触发，`main` 分支保护要求检查全过。
@@ -206,7 +206,7 @@ agents -> services / llm
   2. API 请求与响应分别声明业务 interface / type，禁止 `any`、裸 `Record<string, unknown>` 等无结构类型承载业务数据；同一类型禁止请求 / 响应双向复用。
   3. 不同业务职责的类型禁止复用：字段完全相同也分别声明（`UserListItem` ≠ `UserCardProps` ≠ 表单模型），禁止宽泛类型兜底多职责数据。
 - **Part B**：页面 / 组件 / 状态管理的架构分层（目录职责边界、数据流方向、状态管理选型约束）。
-- **Part C**：C.4 覆盖 dev / build / test / lint --fix / format；C.5 前端流水线（lint → format 校验 → 测试 → build 产物 → 静态部署，与全项目 CI 链同源）；C.6 永久环境约束。
+- **Part C**：C.4 以代码块 + 行尾注释覆盖 dev / build / test / lint --fix / format（禁表格）；C.5 前端流水线（lint → format 校验 → 测试 → build 产物 → 静态部署，与全项目 CI 链同源）；C.6 永久环境约束。
 - **双端前端（如管理端 + 用户端）**：共享组件栈约束、各自门禁细则分别完整写入两份子宪法（宁可重复），禁止「共享」落款或互引。
 
 ---
