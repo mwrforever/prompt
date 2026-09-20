@@ -1,6 +1,6 @@
 ---
 name: loop-graph-designer
-description: 当用户手动调用 /loop-graph-designer，或要求设计「端到端交付流程 / 交付 loop / 执行文档 / 任务编排 / 分阶段落地计划」、给出 spec 功能文档要求按阶段门禁落地、要求按内置场景示例（如项目风险扫描）生成专项执行文档、提到「Phase Gate」「Definition of Done」「升级用户决策」「修复循环」「红线」等词时使用。
+description: 仅当用户显式调用 /loop-graph-designer（[spec|input|skill|example] 子命令，无子命令默认 input）时触发，触发后必须加载技能执行；「设计交付流程 / 执行文档 / 任务编排 / 分阶段落地计划 / Phase Gate」等模糊表述一律不得推断触发，禁止自动或主动调用本技能。
 ---
 
 # 交付 Loop/Graph 设计器
@@ -10,7 +10,7 @@ description: 当用户手动调用 /loop-graph-designer，或要求设计「端�
 
 ## 一、触发与路由
 
-- **触发**：用户显式调用 `/loop-graph-designer [spec|input|skill|example] {…}`，或明确提出「设计交付 loop / 交付 graph / 端到端执行流程 / 按这份 spec 产出执行文档 / 设计任务编排 / 分阶段落地计划 / 按风险扫描等场景生成执行文档 / 像上次那份执行文档那样设计」等意图。
+- **触发（仅限显式调用）**：用户显式调用 `/loop-graph-designer [spec|input|skill|example] {…}` 是唯一触发方式；「设计交付 loop / 交付 graph / 端到端执行流程 / 按 spec 产出执行文档 / 设计任务编排 / 分阶段落地计划 / 像上次那份执行文档那样设计」等模糊表述不构成触发条件，不得据此推断触发、主动调用或推荐本技能。
 - **加载**：触发后必须先读本 SKILL.md 与 `references/template.md`（`references/example.md` 作风格参照；example 模式另读 `examples/README.md` 场景索引与对应场景文件），严格按流程执行；禁止跳过技能内容、仅凭对话印象直接写文档。
 
 | 调用方式 | 模式 | 行为 |
@@ -155,6 +155,7 @@ description: 当用户手动调用 /loop-graph-designer，或要求设计「端�
 
 ## 七、反模式
 
+- ❌ 未显式调用即凭模糊表述（「设计执行文档」「任务编排」等）推断或主动触发本技能 → 仅显式调用 `/loop-graph-designer` 触发（第一节）
 - ❌ 亲自实现功能，或探索/设计过程中改代码 → 只设计文档（第二节）
 - ❌ 从历史记忆、历史会话或旧执行文档搬运内容 → 只用本次输入与实际探查（第三节）
 - ❌ spec 模式调研代码、自行探索实现方案 → 实现方案以 spec 为准

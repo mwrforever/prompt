@@ -205,6 +205,7 @@ uv run alembic upgrade head             # 数据库迁移
   1. 导出函数形参数量 > 3 必须定义参数 interface / type 整体传参（组件 props 天然为对象，本条约束工具 / 服务 / hook 函数）；仅业务确需灵活传参可例外并陈述理由。
   2. API 请求与响应分别声明业务 interface / type，禁止 `any`、裸 `Record<string, unknown>` 等无结构类型承载业务数据；同一类型禁止请求 / 响应双向复用。
   3. 不同业务职责的类型禁止复用：字段完全相同也分别声明（`UserListItem` ≠ `UserCardProps` ≠ 表单模型），禁止宽泛类型兜底多职责数据。
+- **A.8 UI 设计三段律（前端必含，按 template 原文直写）**：谋（@ui-ux-pro-max 谋局定策）→ 建（依图营造）→ 琢（@taste-skill 琢玉成器）三段闭环，顺序不可逆；协作纪律——凡派遣 UI 相关 subagent，指令必须明确要求加载 `@ui-ux-pro-max` 与 `@taste-skill` 方可开工；非前端子宪法省略。
 - **Part B**：页面 / 组件 / 状态管理的架构分层（目录职责边界、数据流方向、状态管理选型约束）。
 - **Part C**：C.4 以代码块 + 行尾注释覆盖 dev / build / test / lint --fix / format（禁表格）；C.5 前端流水线（lint → format 校验 → 测试 → build 产物 → 静态部署，与全项目 CI 链同源）；C.6 永久环境约束。
 - **双端前端（如管理端 + 用户端）**：共享组件栈约束、各自门禁细则分别完整写入两份子宪法（宁可重复），禁止「共享」落款或互引。
