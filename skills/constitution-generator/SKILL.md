@@ -1,6 +1,6 @@
 ---
 name: constitution-generator
-description: 当用户手动调用 /constitution-generator（[claude|agent] 子命令，无子命令默认 agent）、要求「根据项目技术栈生成项目宪法 / AGENTS.md / CLAUDE.md / 项目规范文件」、要求「派发 subagent 调研各大厂商对该技术栈的最佳实践后产出规范」、提到「编码约束 / API 规范 / 层级依赖 / 变更控制 / CI 生产落地与门禁」等宪法要素、要求「前后端规范分开 / 根目录只做索引 / monorepo 各模块一份规范」、或贴出示例要求生成类似规范文件时使用。
+description: 仅当用户显式调用 /constitution-generator（[claude|agent] 子命令，无子命令默认 agent）时触发，触发后必须加载技能执行；「生成项目宪法 / 项目规范 / AGENTS.md / CLAUDE.md / 编码约束 / API 规范」等需求描述或关键词一律不得推断触发，禁止自动或主动调用本技能。
 ---
 
 # 项目宪法生成器（AGENTS.md / CLAUDE.md 双入口）
@@ -19,9 +19,11 @@ description: 当用户手动调用 /constitution-generator（[claude|agent] 子�
 - **索引只落根目录一份**：根索引经链接可达全部宪法；禁止在子项目目录生成任何索引文件，子宪法不重复承载索引。
 - **整仓单应用**（依赖清单位于仓库根、无并列技术子目录）：只产出一份子宪法落仓库根（定位与深度合一，约束效力总则与配套文件职责由其承载），根索引照常生成。
 
-## 二、子命令路由
+## 二、触发与子命令路由（仅限显式调用）
 
-`/constitution-generator [claude|agent] {用户指令}`；首个 token 非 `claude|agent` 时整段视为指令，走默认 agent 模式。
+- **触发（仅限显式调用）**：用户显式调用 `/constitution-generator [claude|agent] {用户指令}` 是唯一触发方式；「根据技术栈生成项目宪法 / 项目规范 / AGENTS.md / CLAUDE.md / 项目规范文件」「派发 subagent 调研厂商最佳实践」「编码约束 / API 规范 / 层级依赖 / 变更控制 / CI 门禁」「前后端规范分开 / monorepo 各模块一份规范」等需求描述或关键词不构成触发条件，不得据此推断触发、主动调用或推荐本技能。
+- **加载**：触发后必须先读本 SKILL.md 与 `references/template.md`（`references/example.md` 作风格参照），严格按流程执行；禁止跳过技能内容、仅凭对话印象直接生成宪法。
+- **子命令路由**：`/constitution-generator [claude|agent] {用户指令}`；首个 token 非 `claude|agent` 时整段视为指令，走默认 agent 模式。
 
 ## 三、输入收集（一次问齐）
 
@@ -79,6 +81,7 @@ description: 当用户手动调用 /constitution-generator（[claude|agent] 子�
 
 ## 七、反模式
 
+- ❌ 未显式调用即凭需求描述或关键词（「生成项目宪法 / 项目规范」等）推断或主动触发本技能 → 仅显式调用 `/constitution-generator` 触发（第二节）
 - ❌ 缺任一命名（实体或根索引只出一方）；子项目目录生成索引；claude / agent 命名混用
 - ❌ 编造规范或来源 URL；主控亲自调研；产物仅存对话不落盘
 - ❌ 子项目内部结构 / 深度约束写进定位层；前端约束写进后端子宪法（或反之）
