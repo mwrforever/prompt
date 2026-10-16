@@ -1,5 +1,9 @@
 {
   "name": "prompt",
+  "owner": {
+    "name": "mwrforever",
+    "url": "https://github.com/mwrforever"
+  },
   "description": "提示词工程技能包（prompt-skills）插件市场：交付 Loop/Graph 设计器（loop-graph-designer）+ 项目宪法生成器（constitution-generator）+ 会话交接器（session-handoff）",
   "plugins": [
     {

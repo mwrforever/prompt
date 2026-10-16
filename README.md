@@ -84,7 +84,7 @@ skills/session-handoff/
 ## 新增技能（后续扩展）
 
 1. 在 `skills/` 下新建目录 `skills/<新技能名>/SKILL.md`（frontmatter: `name` + `description`，name 与目录名一致）
-2. 保持 `skills` 目录引用不变（三个插件清单均已声明 `"skills": "skills"`，自动包含新技能）
+2. 保持 `skills` 目录引用不变（三个插件清单均已声明 `"skills": "./skills"`，自动包含新技能）
 3. 在 README「当前技能」表格中登记
 
 ## 开发与校验
