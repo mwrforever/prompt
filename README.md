@@ -1,82 +1,71 @@
 # prompt-skills · 提示词工程技能包
 
-生产规范化文档的生成技能集，三类产出：
+三个生产规范化文档生成技能，均**仅限用户显式斜杠命令触发**（自然语言需求描述不激活）；文档规定调研、实现、审核均由 subagent 派遣完成，主控代理只做编排与门禁判定。
 
-- **交付执行文档**：基于用户需求或已定项 spec，产出带阶段门禁、循环/中止机制、DoD 目标设定的执行文档
-- **项目宪法**：基于项目技术栈，派发 subagent 调研各厂商最佳实践，产出分层宪法体系——根文件只做定位层（一层目录地图 + 子项目宪法索引），各技术子项目目录各生成一份宪法承载宪法深度，只存工程原则与约束；两种宪法命名必然同时生成：用户选定的一方承载宪法实体（根定位层 + 各子项目宪法），相反命名只做根索引（仅根目录一份纯链接索引，子项目目录不建索引）。全部产出按「宪法基础框架」组装（体系层级依赖 + 每类文档必含章节与必备约束方向，调研按框架槽位标注目标、报告按槽位组织、合成逐槽落位）；内置跨端通用对象与传参约束（形参 > 3 参数对象传参、业务返回必须业务对象、不同业务职责对象禁止复用）按前后端技术栈习语分别写入各子宪法，前端子宪法另内置「谋 → 建 → 琢 → 验」UI 设计四段律约束（凡涉 UI 任何变更无论大小一律强制全流程、逐段先实际加载对应插件技能禁空思考、验段按问题定级三级打回）；根定位层必含约束效力总则（全局与局部宪法对所有开发行为强制生效、冲突不得合入；主控触碰 / 加载子项目内容或派遣 subagent 必须先实际加载对应子宪法、派遣任务内容中显式标注该加载要求）；子宪法必含 CI 生产落地方案（无既有 CI / 技术栈未定时先问服务形态并派 CI 调研专员出方案供用户选定，CI 确认先于其它主题调研）；「配套文件职责」声明只落定位层，子宪法不复述
-- **任务交接文档**：手动触发，把当前会话任务固化成交接文档并显式声明「未完成部分须在新会话执行」，生成后当前会话封存、不再继续实现
+## 技能一览
 
-## 当前技能
-
-| 技能 | 用途 | 输出 |
-| --- | --- | --- |
-| `loop-graph-designer`（交付 Loop/Graph 设计器） | 仅限用户显式调用触发（`/loop-graph-designer [spec\|input\|skill\|example]`，无子命令默认 input 模式），「设计交付 loop / 任务编排」等模糊表述不得推断或主动触发，触发即加载本技能。全流程决策项显式标注【决策项】，一律经内部澄清工具 ask_question（如 AskUserQuestion）获取用户决策，禁止纯文本提问后中断等待、拿到决策后完整续跑。只设计交付执行提示词文档、绝不亲自实现功能：spec 子命令基于功能文档确认实际内容后按「一份 spec = 一个任务」排期生成，不自行探索实现方案；input 子命令基于现有代码与用户逐问澄清、提出 2-3 种实现方案供确认后再排期，不额外产出 spec；skill 子命令把指定协同技能显式编排进执行文档对应阶段；example 子命令按内置场景示例生成场景化专项文档（场景索引与示例独立维护于 `examples/` 目录、每场景一个独立文件，当前仅 `risk`：项目风险扫描，示例中项目特定事实必须替换为目标项目实际探查结果；场景未收录时经 ask_question 展示可退化去向获取用户决策（含取消，决策后按所选模式续跑））。文档内容只来自用户本次输入与目标项目实际探查，禁止从历史记忆或旧文档搬运；每项任务与每次 subagent 派遣必须带明确目标（做什么、产出什么、如何验收），禁止泛化描述；初稿交付前必经成品审核优化循环（信息来源、相关性、核心流程链路含并行冲突与依赖遗漏反思/逐节点流向与条件边/边必要性与局部循环死循环推演、三原则审计，未通过不得交付）。文档原则：精确、完整、无冗余；每份 spec = 一个任务、需求按复杂性模块化拆分（不过度拆分）、loop/graph 编排（主控循环按任务逐阶段展开：阶段落名附本任务门禁摘要、真实迭代单元进循环体、分支写具体去向，禁止通用抽象循环）、阶段门禁与中止条件（决策项经 ask_question 阻塞等待，用户长时间未响应也一直等待、禁止任何理由中断执行）、subagent 执行制、Definition of Done；成品精简可读：全文 ≤5000 字、标题三级内（禁 `####`）、表格 ≤3 张（门禁总表 / WBS / 循环汇总）、协同技能只一句带过不展开原理、一句话能讲清绝不长篇大论，交付前审核含精简性与可读性专项审计 | `/docs/prompt/{yyyy-MM-dd}-{loop|graph}-{任务标题}.md` |
-| `constitution-generator`（项目宪法生成器） | 仅限用户显式调用触发（`/constitution-generator [claude\|agent] {用户指令}`，无子命令默认 agent 模式），「生成项目宪法 / 项目规范 / AGENTS.md / CLAUDE.md」等需求表述不得推断或主动触发，触发即加载本技能。根据项目技术栈生成分层项目宪法体系：按技术栈组件族划分调研主题，派发 subagent 调研各技术栈官方文档与厂商最佳实践，提炼为「只存工程原则与约束、零功能实现描述」的条款（功能说明与业务数据契约归 `specs/` 职责行、变更记录外置 `CHANGELOG.md`）。归属判定从严：仅**所有**子项目共有的硬约束才上收根定位层总则，子项目约束（含双端前端相同的门禁细则）全文写入各自子宪法、宁可重复不写「共享」；说明性内容（定位 / 目录地图 / 目录结构）不重复；各子宪法必含常用命令节（代码块 + 行尾注释呈现，禁表格；打包 / 测试 / 格式化 / 修复 / 启动），目录层级（仓库地图 / 子项目目录 / 分层目录边界）一律文本块呈现、禁表格罗列；引用只认当前工作区实存（`specs/` 等设计文档禁止凭项目历史 / 全局记忆关联旧文档）。产出按「宪法基础框架」逐槽组装：调研派遣标注框架槽位与必备约束方向、报告按槽位组织、合成逐槽落位；体系内置跨端通用对象与传参约束（形参 > 3 必须参数对象传参 / 业务返回必须业务对象禁止裸 dict / 不同业务职责对象禁止复用即使字段全同也重建类，仅业务确需灵活结构可例外）按前后端各自技术栈习语分别写入对应子宪法；前端子宪法内置「UI 设计思想 · 谋建琢验四段律」（凡涉 UI 任何变更无论大小一律强制全流程：谋 @impeccable + @ui-ux-pro-max 谋局定策——@impeccable 以产品经理视角判断实现合不合理、定视觉方向，@ui-ux-pro-max 以素材库与全局界面样式实现规范提供示例参考与更优实现思路 → 建 依图营造 → 琢 @taste-skill 极致打磨字体样式 / 动效交互 / 组件细节、打磨不破性能 → 验 @impeccable 复用已加载以产品思维终验视觉结果并按问题定级三级打回——功能与界面布局明显不合理或严重缺陷打回谋段重新设计、大量 UI 小问题如样式丑陋 / 大量交互卡顿（含动效交互与渲染性能）打回建段修复、仅需动效增强 / 组件样式优化打磨 / 渲染性能局部增强打回琢段，顺序不可逆禁跳段禁简化、验段定级打回为唯一回退路径，逐段先实际加载对应技能禁空思考，派遣 UI 相关 subagent 必须要求开工前加载对应技能；执行模式铁律（主编排 · 子实现 · 页为单位验证）——主 agent 只编排 / 决策 / 派发 / 收口禁亲自设计实现验收，单页单实现 subagent 禁跨页，每页派独立验证 subagent 出三级定级结论并附四维核验结论（高级视觉 / 高级交互 / 流畅动画 / 高性能渲染）、误报或存疑时主 agent 直连复核为「禁亲自验收」唯一例外，多页批次通过后终验 subagent 全局收口，验证以真实渲染同屏目测为据禁数值 diff 替代，派遣指令显式写入分角色加载要求与子宪法路径、核验实际加载后方可放行；渲染性能精简约束贯穿四段——谋前置取舍高代价视觉、建硬约束动效仅合成属性 / 长列表虚拟化分页 / 图片懒加载、琢打磨不破性能、验段定级打回覆盖渲染性能问题）；根定位层必含「约束效力与遵从总则」——全局与局部宪法对所有开发行为强制生效、冲突不得合入主分支；主控触碰 / 加载子项目内容或派遣 subagent 时必须先实际加载对应子宪法，派遣任务内容中显式标注该加载要求、未加载不得开工。两种宪法同时生成、角色随子命令：agent 模式（默认）= AGENTS.md 承载宪法实体（根定位层 + 各子项目宪法）+ CLAUDE.md 根索引；claude 模式整体对调；索引只落根目录一份（纯 md 链接，经链接可达全部宪法），子项目目录内不生成索引文件。CI 先行：无既有 CI / 技术栈未定时先问服务形态（是否用户端 + 管理端多前端）并派 CI 调研专员出 2–3 套方案供用户选定，CI 确认先于其它主题调研；每份子宪法必含 C.5 CI 生产落地方案；「配套文件职责」声明只落定位层、子宪法不复述 | agent 模式：`<目标项目根>/AGENTS.md`（定位层）+ `<子项目>/AGENTS.md` ×N + 根索引 `CLAUDE.md`；claude 模式命名整体对调；另含 `/docs/agmds-research/{yyyy-MM-dd}-{主题}.md` 调研报告；整仓单应用时宪法 + 根索引两份 |
-| `session-handoff`（会话交接器） | 仅限用户显式调用触发（`/session-handoff [update\|rewrite]`，无子命令默认 rewrite），「保存进度 / 交接 / 生成交接文档 / 续接准备」等自然语言表述不得推断或主动触发，触发即加载本技能。只生成/更新进度交接文档、绝不实现任务：默认（rewrite）在项目 docs/progress/ 新建交接文档（同名追加 -2、-3 序号，不覆盖历史），update 原地更新当前会话内引入的进度文件（本会话生成的或续接时读取的那篇，绝不取自历史记忆），项目内无符合规范的进度文件时退化为 rewrite；文档开头条件固化当前会话 todo 追踪列表快照（仅当存在未完成条目时固化，全部完成不固化，update 时清除已完成条目、清空后整节删除）；文档内容仅来自当前会话的设计实现且精简化（每行一句话，变更明细与涉及文件清单不写入、由 git diff / git log 承担，已完成只留标记式一句话结论）；未经用户明确指令禁止关联任何其他进度文件（含上一份进度文档、TODO/EVENT 类进度管理文件）。顶部显式声明未完成任务须在新会话执行与**续接加载纪律**（新会话开工前必须基于当前上下文重新实际加载宪法文件——按工具约定定位 CLAUDE.md / AGENTS.md、识别不出默认 AGENTS.md——与各任务「需重新加载」字段所列技能，派遣 subagent 时指令必须强制要求 subagent 实际加载对应子宪法并严格遵守其约定，交接文档只是进度快照不构成已加载状态、禁止凭文档自以为已加载）；生成并回报后当前会话立即封存，停止一切任务实现，后续续做请求一律引导至新会话 | `<目标项目根>/docs/progress/{yyyy-MM-dd}-{精简标题}.md` |
-
-文档形态：**loop**（序贯阶段 + 门禁 + 修复循环）或 **graph**（并行分支 DAG + 汇合门禁 + 回退边），按任务是否存在独立可并行分支判定。
-
-## 兼容性
-
-技能本体采用 [agentskills.io](https://agentskills.io) 开放标准（目录 + `SKILL.md`），该标准被 zcode、claude code、codex、kimi 原生支持，同一份文件四平台通用；插件清单按各平台私有约定分别提供。
-
-| 平台 | 插件清单 | 技能发现路径 | 安装方式 |
+| 技能 | 功能 | 子命令 | 输出 |
 | --- | --- | --- | --- |
-| zcode | `.zcode-plugin/plugin.json` | 设置 → 插件 → 创建 → 添加插件市场，填仓库地址（仓库根含 `marketplace.json`） | 市场添加成功后在「个人」分段安装 `prompt-skills` 插件，即获得本仓库全部技能 |
-| claude code | `.claude-plugin/plugin.json` | 插件安装后自动注册 | `/plugin marketplace add <本仓库路径>` 或直接安装 `.claude-plugin` 目录 |
-| codex | `.codex-plugin/plugin.json` | 插件机制（v0.146+ 支持插件；技能亦可直接放入 `~/.codex/skills/`） | 按 Codex 插件安装指引添加本仓库 |
-| kimi（Kimi Code CLI） | 无需清单（Skills 按标准路径发现） | `~/.kimi/skills/`、`~/.claude/skills/`、`~/.codex/skills/`、`~/.agents/skills/`、`~/.config/agents/skills/` 之一 | 将 `skills/loop-graph-designer/` 复制到任一发现路径；或用 `--skills-dir` 指向本仓库 `skills/` |
+| `loop-graph-designer`（交付 Loop/Graph 设计器） | 基于需求（input）或已定 spec 产出生产规范化执行文档：任务拆分、阶段门禁与中止条件、subagent 执行制、Definition of Done；按任务并行性选 loop（序贯阶段）/ graph（并行 DAG）形态。skill 子命令把协同技能编排进执行文档对应阶段，example 子命令按内置场景生成专项文档（当前内置 risk：项目风险扫描） | `/loop-graph-designer [spec\|input\|skill\|example]`，默认 input | `/docs/prompt/{yyyy-MM-dd}-{loop\|graph}-{任务标题}.md` |
+| `constitution-generator`（项目宪法生成器） | 按项目技术栈生成分层宪法体系：根定位层（一层目录地图 + 子项目宪法索引）+ 各技术子项目宪法（只存工程原则与约束、零功能实现描述）+ 根索引，AGENTS.md / CLAUDE.md 双命名同时产出。内置本地宪法库（`data/stack/`、`data/ci/`）查库优先，未命中的技术栈才派 subagent 调研官方文档与厂商最佳实践，新片段经用户确认达标后回写补库 | `/constitution-generator [claude\|agent]`，默认 agent | `<项目根>/AGENTS.md` + `<子项目>/AGENTS.md` ×N + 根索引 `CLAUDE.md`（claude 模式命名对调）；另含 `docs/agmds-research/` 调研报告 |
+| `session-handoff`（会话交接器） | 把当前会话任务固化成进度交接文档，显式声明「未完成部分须在新会话执行」与续接加载纪律；生成后当前会话立即封存、停止一切任务实现。update 原地更新本会话引入的进度文件 | `/session-handoff [update\|rewrite]`，默认 rewrite | `<项目根>/docs/progress/{yyyy-MM-dd}-{精简标题}.md` |
 
-> 本仓库是「一个插件（prompt-skills）+ 一个市场（prompt）」形态：仓库根 `marketplace.json` 为 zcode 市场清单（`.claude-plugin/marketplace.json` 供 claude code 市场使用），市场条目以 `source: "./"` 指向仓库根（插件本体，`skills/` 内含全部技能）。以 git 仓库或本地目录方式添加市场时，客户端均先校验该市场清单。
+各技能的行为红线、完整流程与章节模板见其 `SKILL.md` 与 `references/`，README 不复述。
 
-> kimi 的 `plugin.json` 仅用于声明可执行工具；本技能为纯知识型（无需工具），因此不提供 kimi 工具插件清单，按技能方式安装即可。
+## 兼容性与安装
 
-### 未使用插件清单时的兜底安装（四平台通用）
+技能本体采用 [agentskills.io](https://agentskills.io) 开放标准（目录 + `SKILL.md`），zcode、claude code、codex、kimi 原生支持，同一份文件四平台通用。
+
+| 平台 | 安装方式 |
+| --- | --- |
+| zcode | 设置 → 插件 → 创建 → 添加插件市场（仓库根含 `marketplace.json`），添加成功后在「个人」分段安装 `prompt-skills` 插件 |
+| claude code | `/plugin marketplace add <本仓库路径>` 或直接安装 `.claude-plugin` 目录 |
+| codex | 按 Codex 插件安装指引添加本仓库（v0.146+），或将技能复制进 `~/.codex/skills/` |
+| kimi | 将 `skills/<技能名>/` 复制到 `~/.kimi/skills/` 等任一发现路径，或用 `--skills-dir` 指向本仓库 `skills/` |
+
+> 本仓库是「一个插件（prompt-skills）+ 一个市场（prompt）」形态：根 `marketplace.json` 为 zcode 市场清单，`.claude-plugin/marketplace.json` 供 claude code 使用，市场条目以 `source: "./"` 指向仓库根。kimi 无需工具插件清单（本技能包为纯知识型）。
+
+不用插件清单时，直接复制技能目录到各平台用户级路径即可：
 
 ```bash
-# 任选其一（按平台惯例）
-cp -r skills/loop-graph-designer ~/.zcode/skills/          # zcode 用户级
-cp -r skills/loop-graph-designer ~/.claude/skills/         # claude code 用户级
-cp -r skills/loop-graph-designer ~/.codex/skills/          # codex 用户级
-cp -r skills/loop-graph-designer ~/.kimi/skills/           # kimi 用户级
+cp -r skills/loop-graph-designer ~/.zcode/skills/    # zcode；claude code / codex / kimi 换对应目标路径
 ```
 
-## 使用方式
-
-三个技能均**仅限用户显式调用触发**（点名技能或输入斜杠命令），仅描述需求（如「设计个交付 loop」「保存进度」）不会激活技能。在任意支持本项目技能的平台输入，例如：
+## 使用示例
 
 ```text
-「/loop-graph-designer input 设计一个{任务}的交付 loop，要求任务精细拆分、明确中止条件，附参考文档 {路径} 与实现要求 {约束}」
-「/loop-graph-designer spec docs/specs/a.md docs/specs/b.md 技术栈 Spring Boot 3，强制 TDD」
-「/loop-graph-designer skill {需触发的技能列表} 按这份 spec 落地：{路径}」
-「/loop-graph-designer example risk 对当前仓库做一次项目风险扫描，只读出报告不修复」（场景化专项：以内置风险扫描示例为基架生成）
-「/constitution-generator agent 按这个技术栈生成项目宪法：{技术栈清单}」（默认，AGENTS.md 实体 + CLAUDE.md 根索引）
-「/constitution-generator claude 生成 CLAUDE.md 入口的宪法体系：{技术栈清单}」（CLAUDE.md 实体 + AGENTS.md 根索引）
-「/session-handoff 保存进度，交接给新会话」/「/session-handoff update 补充交接文档：{新进展}」
+「/loop-graph-designer input 设计一个{任务}的交付 loop，要求任务精细拆分、明确中止条件」
+「/loop-graph-designer spec docs/specs/a.md 技术栈 Spring Boot 3，强制 TDD」
+「/loop-graph-designer example risk 对当前仓库做一次项目风险扫描，只读出报告不修复」
+「/constitution-generator agent 按这个技术栈生成项目宪法：{技术栈清单}」
+「/constitution-generator claude 生成 CLAUDE.md 入口的宪法体系：{技术栈清单}」
+「/session-handoff 保存进度，交接给新会话」
 ```
 
-技能产出文档后，将该文档交给支持 subagent 派遣的编码工具或 agent 平台加载执行即可；文档规定调研、实现、审核均由 subagent 派遣完成，主控代理只做编排与门禁判定。
+技能产出文档后，交给支持 subagent 派遣的编码工具或 agent 平台加载执行即可。
 
 ## 技能结构
 
 ```text
 skills/loop-graph-designer/
-├── SKILL.md                  # 子命令路由（spec/input/skill/example）、行为红线与内容来源约束、形态判定、文档设计流程
-├── examples/                 # example 子命令场景专项示例（独立目录，每场景一个独立文件）
-│   ├── README.md             # 场景索引与使用规则（含场景未收录时的降级列表）
-│   └── risk.md               # risk 场景专项完整示例（真实项目历史产出，仅供结构参照）
+├── SKILL.md                  # 子命令路由、行为红线与内容来源约束、形态判定、文档设计流程
+├── examples/                 # example 子命令场景专项示例（一场景一文件，当前内置 risk）
 └── references/
     ├── template.md           # 生成文档的必含章节骨架与逐章填写规则
-    └── example.md            # 书面风格示例（loop 形态 + graph 形态要点）
+    └── example.md            # 书面风格示例
 
 skills/constitution-generator/
-├── SKILL.md                  # 子命令路由（claude/agent，默认 agent，实体 + 根索引双命名）、CI 先行流程、宪法基础框架槽位、工作流：输入收集、技术栈分域、subagent 调研派遣、章节合成、落盘
+├── SKILL.md                  # 子命令路由、宪法基础框架槽位、本地宪法库查库优先与达标回写、工作流
+├── data/                     # 本地宪法库（查库优先，未命中才派遣；条目经用户达标确认回写增长）
+│   ├── README.md             # 库布局（stack/ + ci/ 双目录）、条目格式与维护纪律、条目索引
+│   ├── stack/                # 技术栈宪法条目 {技术栈}.md（目录随首个条目回写创建）
+│   └── ci/                   # CI 构建配置段条目 {语言}.md（目录随首个条目回写创建）
 └── references/
     ├── template.md           # 定位层与子宪法必含章节骨架与逐章填写规则（含模式命名映射）
     └── example.md            # 书面风格示例（根定位层 + 子项目宪法 + 根索引）
 
 skills/session-handoff/
-├── SKILL.md                  # 仅显式调用触发、触发即封存：新建交接文档 + 声明新会话执行与续接加载纪律（宪法与技能须重新实际加载、subagent 派遣强制加载对应子宪法并严格遵守）+ 当前会话停止实现
+├── SKILL.md                  # 触发即封存：新建交接文档 + 新会话执行与续接加载纪律
 └── references/
     └── handoff-template.md   # 交接文档必含章节骨架，顶部「交接声明」不可省略
 ```
@@ -84,10 +73,10 @@ skills/session-handoff/
 ## 新增技能（后续扩展）
 
 1. 在 `skills/` 下新建目录 `skills/<新技能名>/SKILL.md`（frontmatter: `name` + `description`，name 与目录名一致）
-2. 保持 `skills` 目录引用不变（三个插件清单均已声明 `"skills": "./skills"`，自动包含新技能）
-3. 在 README「当前技能」表格中登记
+2. 三个插件清单均已声明 `"skills": "./skills"`，新技能自动包含
+3. 在 README「技能一览」表格登记
 
 ## 开发与校验
 
 - 文件编码：UTF-8 无 BOM，LF 行尾
-- 修改 SKILL.md 或 references 后，用 2–3 个真实测试 prompt 实测一轮（直接向支持该技能的平台提出），确认输出结构完整、门禁可验证后再定稿
+- 修改 SKILL.md 或 references 后，用 2–3 个真实测试 prompt 实测一轮，确认输出结构完整、门禁可验证后再定稿
