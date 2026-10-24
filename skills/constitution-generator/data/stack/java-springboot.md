@@ -2,7 +2,7 @@
 
 > **适用范围**：Java ≥21（条目按 JDK 25 LTS + Spring Boot 4.1 线沉淀，Boot 3.x 未覆盖即视为未命中）· Spring Boot ≥4.1 · MyBatis-Plus ≥3.5.17（spring-boot4-starter）· PostgreSQL ≥15 · Maven ≥3.9（经 mvnw wrapper）· Redisson ≥4.x
 > **入库记录**：2026-10-24 维护者收录（内置路径），来源 img-create 项目 backend-java 宪法（含 2026-10-18～20 多轮用户钉版条款）
-> **槽位覆盖**：A.1 / A.2 / A.3 / A.4（A.4.1–A.4.3）/ A.5 / A.7 / C.4；A.6 引用全局注释 / 日志 / 测试规范不入库；A.8 为前端体系内置不适用。CI 构建配置段见 [ci/java.md](../ci/java.md)。
+> **槽位覆盖**：A.1 / A.2 / A.3 / A.4（A.4.1–A.4.3）/ A.5 / A.7 / C.3 目录职责骨架 / C.4；A.6 引用全局注释 / 日志 / 测试规范不入库；A.8 为前端体系内置不适用。CI 构建配置段见 [ci/java.md](../ci/java.md)。
 
 ## A.1 编码约束
 
@@ -83,6 +83,38 @@
 3. **对象职责四分（2026-10-20 用户钉版）**：①枚举一律 enums/ 包（enum 类型 + code 双向映射）②DTO = 请求入参 + 业务流转核心实体（类形态 Lombok @Data）③VO = 返回前端的业务对象（类形态 Lombok，禁用 record 承载 DTO/VO 职责）④record 仅限「需要不可变能力且不需要多对象之间转换」的业务对象（多值返回、临时聚合、查询投影，落 record/ 或组件包内私有载体）——不得因省事混用；层间转换一律经 convert 层 MapStruct。
 4. **实体注解组合（2026-10-20 用户钉版）**：实体禁 `@Data`——一律 `@TableName + @Getter @Setter @NoArgsConstructor @AllArgsConstructor + @EqualsAndHashCode(of = 业务自然键)（排除自动生成 id）+ @ToString(exclude = 敏感字段)`；入参校验用 jakarta.validation 注解承载，禁业务方法内散装手写校验。
 5. **例外边界**：例外须能陈述业务理由；无理由的违反视为缺陷，不得合入。
+
+## C.3 目录职责骨架
+
+> 通用分层目录骨架，按项目实际裁剪（无对应层的整目录省略，禁凑数）；目录职责唯一载体 = 目录树行尾注释（Part B 不另设目录职责清单，与 template B / C.3 约定同源）；边界按业务功能域级成文，禁按具体表或对象钉死。
+
+```text
+src/main/java/<根包>/
+├── <Application>.java   # 入口：应用组装；禁业务逻辑
+├── controller/          # HTTP 契约层：入参校验（@Valid）+ 调 service + 组装响应；按前缀域分包；禁业务逻辑、禁直接注入 mapper
+├── dto/                 # 请求入参对象 + 业务流转核心载体（每接口独立定义、禁跨层复用）
+├── vo/                  # 响应出参对象（禁 Entity 直接出 API 层；id 字段 String 出端）
+├── record/              # 仅限不可变且无需多对象转换的业务对象（多值返回、临时聚合、查询投影）
+├── service/             # 业务逻辑与事务边界；接口 I 前缀、实现 Impl 落 service/impl/
+├── mapper/              # 数据访问：BaseMapper 继承 + SQL 收敛；禁出 service 边界
+├── entity/              # 表映射对象（注解组合见 A.7）；禁上浮 controller
+├── convert/             # MapStruct 转换器：层间对象转换唯一出口；金额换算收敛于此
+├── cache/               # 领域缓存：复杂缓存设计唯一落点（简单场景走 Spring Cache 注解）
+├── gateway/             # 外部系统适配（对象存储 / 短信 / 第三方开放平台）
+├── security/            # 安全链、JWT 签发 / 验签、鉴权与审计
+├── exception/           # 业务异常与错误码 + 全局异常处理
+├── config/              # @Configuration 与插件 Bean 集中注册；禁业务逻辑
+├── properties/          # @ConfigurationProperties 属性类全部集中，禁散落
+├── enums/               # 枚举（enum 类型 + code 双向映射）
+├── constants/           # 常量类
+├── infrastructure/      # Redis 封装、分布式 ID 生成器等基础设施能力；禁放业务域逻辑
+└── util/                # 通用工具；禁业务依赖
+src/main/resources/
+├── db/migration/        # Flyway 迁移（唯一 schema 变更入口，分段号段）
+├── mapper/              # MyBatis XML（复杂 SQL，与 mapper 接口同名）
+├── lua/                 # Redis Lua 脚本（一功能一文件，禁代码内嵌）
+└── application*.yml     # 配置（共享基座 + profile 覆盖）
+```
 
 ## C.4 常用命令骨架
 

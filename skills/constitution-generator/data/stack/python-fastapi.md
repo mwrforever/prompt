@@ -2,7 +2,7 @@
 
 > **适用范围**：CPython ≥3.13 · FastAPI ≥0.140（0.143.3 实测）· uvicorn ≥0.54 · pydantic-settings ≥2.16 · SQLAlchemy 2.x（async ORM，2.1.5 实测）+ asyncpg ≥0.32 · redis-py ≥8（async 客户端）· httpx（AsyncClient）· uv ≥0.13 · ruff ≥0.17 · pytest ≥9
 > **入库记录**：2026-10-24 维护者收录（内置路径），来源 img-create 项目 backend-ai 宪法（含 2026-10-18～20 多轮用户钉版条款）
-> **槽位覆盖**：A.1 / A.2 / A.3 / A.4 / A.5 / A.7 / C.4；Part B（agent 编排 / LLM 网关 / 技能系统）属项目架构主题不收录；A.6 引用全局注释 / 日志 / 测试规范不入库；A.8 为前端体系内置不适用。CI 构建配置段见 [ci/python.md](../ci/python.md)。
+> **槽位覆盖**：A.1 / A.2 / A.3 / A.4 / A.5 / A.7 / C.3 目录职责骨架 / C.4；Part B（agent 编排 / LLM 网关 / 技能系统）属项目架构主题不收录；A.6 引用全局注释 / 日志 / 测试规范不入库；A.8 为前端体系内置不适用。CI 构建配置段见 [ci/python.md](../ci/python.md)。
 
 ## A.1 编码约束
 
@@ -64,6 +64,27 @@
 3. **职责隔离**：请求模型 ≠ 响应模型 ≠ 内部实体（dataclass）≠ ORM 模型（models/）≠ 消息模型 ≠ 事件模型，字段全同也按职责各自建类；禁万能对象承载多职责、禁跨层直传。
 4. **例外边界**：对外边界（HTTP 入出口、消息契约、事件流、跨服务共享契约）一律 Pydantic BaseModel；日志上下文、trace 透传、JSON 序列化中间态允许 dict，须在代码注释声明业务理由；无理由的违反视为缺陷，不得合入。
 5. **模型等值与字符串表示显式管控（2026-10-20 用户钉版）**：Pydantic 敏感字段（密钥 / 口令哈希 / 令牌）一律 `Field(..., repr=False)`；dataclass 等值显式管控——生成 id 字段 `field(compare=False)`、按业务自然键比较；禁默认全字段 repr / eq 泄露敏感字段或引入 id 漂移。
+
+## C.3 目录职责骨架
+
+> 通用分层目录骨架，按项目实际裁剪（无对应层的整目录省略，禁凑数）；目录职责唯一载体 = 目录树行尾注释（Part B 不另设目录职责清单，与 template B / C.3 约定同源）；agent / LLM 网关 / 技能系统等项目架构域（agents / llm / middleware 等）按项目架构调研补齐，不入本条目通用骨架。
+
+```text
+<项目>/
+├── app/
+│   ├── main.py          # 应用组装：实例、中间件、路由挂载、lifespan 生命周期；禁业务逻辑
+│   ├── api/v1/          # 路由层：解析 + 校验 + 调 service；禁业务逻辑，禁直调 repository / model
+│   ├── schemas/         # Pydantic 契约：HTTP 请求 / 响应、消息、事件；仅定义契约，零业务逻辑
+│   ├── services/        # 业务逻辑与事务边界（编排 repositories / 网关）
+│   ├── repositories/    # 数据访问：单表 / 关联查询与结果组装；禁业务逻辑、禁自带事务边界
+│   ├── models/          # SQLAlchemy ORM：仅定义结构，禁查询与业务逻辑
+│   ├── core/            # 基础设施单例与横切工具（database / redis / config / auth 等）
+│   └── workers/         # 后台任务 worker：独立进程，业务编排调 services；数据读写经 repositories
+├── tests/               # pytest（单测 + integration/ 集成层）
+├── scripts/             # 运维脚本（启停 / spec 导出）
+├── pyproject.toml       # 依赖与工具配置（uv 管理）
+└── uv.lock              # 锁文件（入库，禁手改）
+```
 
 ## C.4 常用命令骨架
 
