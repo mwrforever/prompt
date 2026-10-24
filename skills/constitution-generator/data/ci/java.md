@@ -1,7 +1,7 @@
 # java · CI 构建配置段条目
 
-> **适用语言与版本范围**：Java ≥21 · Maven ≥3.9（经 mvnw wrapper）；工具链前提：Spotless（格式化，palantir-java-format 等）+ Surefire / JUnit5（测试）+ 可选 springdoc（OpenAPI spec 提交物）+ 可选 Flyway（迁移）
-> **入库记录**：2026-10-24 维护者收录（内置路径），来源 img-create 项目 backend-java 宪法 C.5 与 `scripts/ci.sh` 实跑沉淀
+> **适用语言与版本范围**：Java ≥21 · Maven ≥3.9（经 mvnw wrapper）；工具链前提：Spotless（格式化，palantir-java-format 等）+ Surefire / JUnit5（测试）+ 可选 springdoc（OpenAPI spec 提交物）+ 可选 Flyway（迁移）+ 可选 Testcontainers（PG 集成测试）
+> **入库记录**：2026-10-24 维护者收录（内置路径），来源 img-create 项目 backend-java 宪法 C.5 与 `scripts/ci.sh` 实跑沉淀；同日 TallyHo 项目用户达标确认回写补入合干层 Testcontainers 探测条目
 > **CI 形态**：按「本地双层 CI」沉淀——快层随 git commit 由 pre-commit 触发（仅暂存文件、秒级），慢层随 git push 由 pre-push 委托脚本门禁，合入主干前另设全量层；云端流水线（GitHub Actions / GitLab CI 等）未收录，本条目阶段与门禁链可直接映射为云端 job，需平台细则时按未命中调研。
 
 ## 快层（pre-commit · 仅暂存文件）
@@ -38,7 +38,7 @@ ls db/migration | sed -n 's/^V\([0-9]\+\)__.*/\1/p' | sort | uniq -d   # 版本�
 
 ## 合入主干层（全量 + 集成）
 
-- 前置：基础设施就绪（本地数据库 / 中间件，幂等起停脚本）
+- 前置：基础设施就绪（本地数据库 / 中间件，幂等起停脚本）；Testcontainers 集成测试纳入本层时，起容器前先探测 Docker 可用性，缺失明确报错指引（禁晦涩失败）
 - gate 全量 + 启动冒烟：起应用 → `/health` 探活 → 停。注意硬停后租约类资源（如机器号注册 TTL 键）靠过期归还，紧随其后的重启会撞号 fail-fast——冒烟前轮询等待租约过期再起（设上限超时放行走原失败路径留痕）
 - 退出码即门禁：任一阶段非零退出即阻断；分阶段横幅计数便于定位失败阶段
 

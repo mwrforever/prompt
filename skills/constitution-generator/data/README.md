@@ -13,7 +13,7 @@
 **stack 条目**（技术栈宪法）：
 
 1. 文件头：适用范围（组件 + 版本下限，项目实测版本低于下限即视为未命中）+ 入库记录（日期与来源：用户达标确认回写，附调研报告路径）+ 槽位覆盖清单。
-2. 槽位条款：按宪法框架槽位分节（A.1–A.6 / A.7 本栈习语 / C.3 目录职责骨架 / C.4 常用命令），原则级条款（禁令 / 必须 / 边界），零功能实现描述；不适用槽位写省略说明（与 template 省略规则一致），A.8 四段律为体系内置条款不在库条目范围。
+2. 槽位条款：按宪法框架槽位分节（A.1–A.6 / A.7 本栈习语 / C.3 目录职责骨架 / C.4 常用命令），原则级条款（禁令 / 必须 / 边界），零功能实现描述；不适用槽位写省略说明（与 template 省略规则一致）。UI 设计四段律已改编为仓库 `prompt/` 独立提示词（每文件仅强制加载单一技能），不在库条目与宪法体系内。
 3. 文末来源：关键官方文档 URL，真实可查。
 
 **ci 条目**（CI 构建配置段）：
@@ -23,16 +23,17 @@
 
 ## 条目索引
 
-条目随技能使用增长：用户达标确认后回写新增（SKILL.md §六.9）、维护者可内置收录（本仓库行为），本表由入库动作同步维护。首批条目 2026-10-24 自 img-create 项目宪法收录（含 2026-10-18～20 多轮用户钉版条款，项目专属内容已剥离）。
+条目随技能使用增长：用户达标确认后回写新增（SKILL.md §六.9）、维护者可内置收录（本仓库行为），本表由入库动作同步维护。首批条目 2026-10-24 自 img-create 项目宪法收录（含 2026-10-18～20 多轮用户钉版条款，项目专属内容已剥离）；同日 TallyHo 项目用户达标回写补入 java-springboot 三组分节（Caffeine / Testcontainers / Compose 附录）、ci 两处增补，并新建 typescript-miniprogram 条目。
 
 | 类型 | 文件 | 适用范围 | 覆盖槽位 |
 |---|---|---|---|
-| stack | [java-springboot.md](stack/java-springboot.md) | Java ≥21 · Spring Boot ≥4.1 · MyBatis-Plus ≥3.5.17 · PostgreSQL ≥15 · Maven ≥3.9（Boot 3.x 未覆盖） | A.1–A.5 / A.7 / C.3 / C.4（A.6 引全局不入库） |
+| stack | [java-springboot.md](stack/java-springboot.md) | Java ≥21 · Spring Boot ≥4.1 · MyBatis-Plus ≥3.5.17 · PostgreSQL ≥15 · Maven ≥3.9（Boot 3.x 未覆盖）；Redis 场景（Redisson）+ 无 Redis 场景（Caffeine A.5.2）+ Testcontainers 测试基建 + Compose 部署附录 | A.1–A.5（A.5.1/A.5.2）/ A.7 / C.3 / C.4 / 测试基建 / 附录部署（A.6 引全局不入库） |
 | stack | [python-fastapi.md](stack/python-fastapi.md) | CPython ≥3.13 · FastAPI ≥0.140 · SQLAlchemy 2.x async + asyncpg · redis-py ≥8 · uv · ruff · pytest | A.1–A.5 / A.7 / C.3 / C.4 |
 | stack | [typescript-react.md](stack/typescript-react.md) | Node ≥24 · pnpm ≥12 · React ≥19 · TS strict · Vite ≥8 · TanStack Router/Query · vitest（UI 分节：Tailwind 4 + shadcn / antd 6） | A.1–A.3 / A.5 / A.7 / C.4（A.4 无 DB 省略） |
-| ci | [java.md](ci/java.md) | Maven/mvnw · Spotless · Surefire · springdoc spec 防漂移 · Flyway 号段校验 | 快层 / 慢层 / 合干层（本地双层 CI） |
+| stack | [typescript-miniprogram.md](stack/typescript-miniprogram.md) | 微信原生小程序 · TypeScript strict · TDesign ≥2.12.0 线 · echarts-for-weixin（canvas 2d）· npm（pnpm 布局约束见条目）· 基础库按依赖综合取值（隐私 ≥2.32.3） | A.1 / A.2 / A.3 / A.5 / A.7 / C.3 / C.4 + 附加分节（隐私授权 / 广告 / 敏感词扫描）（A.4 无 DB 省略，A.6 引全局不入库） |
+| ci | [java.md](ci/java.md) | Maven/mvnw · Spotless · Surefire · springdoc spec 防漂移 · Flyway 号段校验 · Testcontainers（合干层探测） | 快层 / 慢层 / 合干层（本地双层 CI） |
 | ci | [python.md](ci/python.md) | uv · ruff · pytest marker 分层 · FastAPI spec 防漂移 | 同上 |
-| ci | [typescript.md](ci/typescript.md) | pnpm · eslint · prettier · vitest · gen:api 防漂移 | 同上 |
+| ci | [typescript.md](ci/typescript.md) | pnpm · eslint · prettier · vitest · gen:api 防漂移；含「微信原生小程序（npm）」小节（tsc --noEmit 独立门禁 / 构建 npm 非空校验 / 敏感词扫描 / miniprogram-ci 纪律） | 同上 |
 
 ## 维护纪律
 

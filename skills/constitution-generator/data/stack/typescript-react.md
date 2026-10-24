@@ -2,7 +2,7 @@
 
 > **适用范围**：Node ≥24 · pnpm ≥12（corepack + packageManager 字段精确钉版）· React ≥19 · TypeScript strict（≥5，新工程从零开启）· Vite ≥8 · TanStack Router / TanStack Query 5+ · zustand · vitest · eslint（扁平配置）+ prettier · openapi-typescript + openapi-fetch
 > **入库记录**：2026-10-24 维护者收录（内置路径），来源 img-create 项目 user-web（Tailwind 4 + shadcn 系）与 admin-web（antd 6 系）双宪法（含 2026-10-18～20 用户钉版条款）；共享核心 + 双 UI 栈分节
-> **槽位覆盖**：A.1（含 UI 栈分节）/ A.2 / A.3（API 层）/ A.5（渲染性能）/ A.7 / C.4；A.4 无 DB 省略（请求 / 响应建模由 A.7 条款 2 承载）；A.6 引用全局注释 / 测试规范不入库；A.8 为体系内置不入库。CI 构建配置段见 [ci/typescript.md](../ci/typescript.md)。
+> **槽位覆盖**：A.1（含 UI 栈分节）/ A.2 / A.3（API 层）/ A.5（渲染性能）/ A.7 / C.4；A.4 无 DB 省略（请求 / 响应建模由 A.7 条款 2 承载）；A.6 引用全局注释 / 测试规范不入库。CI 构建配置段见 [ci/typescript.md](../ci/typescript.md)。
 
 ## A.1 编码约束（通用）
 

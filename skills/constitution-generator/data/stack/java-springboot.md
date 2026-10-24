@@ -1,8 +1,8 @@
 # java-springboot · 技术栈宪法条目
 
-> **适用范围**：Java ≥21（条目按 JDK 25 LTS + Spring Boot 4.1 线沉淀，Boot 3.x 未覆盖即视为未命中）· Spring Boot ≥4.1 · MyBatis-Plus ≥3.5.17（spring-boot4-starter）· PostgreSQL ≥15 · Maven ≥3.9（经 mvnw wrapper）· Redisson ≥4.x
-> **入库记录**：2026-10-24 维护者收录（内置路径），来源 img-create 项目 backend-java 宪法（含 2026-10-18～20 多轮用户钉版条款）
-> **槽位覆盖**：A.1 / A.2 / A.3 / A.4（A.4.1–A.4.3）/ A.5 / A.7 / C.3 目录职责骨架 / C.4；A.6 引用全局注释 / 日志 / 测试规范不入库；A.8 为前端体系内置不适用。CI 构建配置段见 [ci/java.md](../ci/java.md)。
+> **适用范围**：Java ≥21（条目按 JDK 25 LTS + Spring Boot 4.1 线沉淀，Boot 3.x 未覆盖即视为未命中）· Spring Boot ≥4.1 · MyBatis-Plus ≥3.5.17（spring-boot4-starter）· PostgreSQL ≥15 · Maven ≥3.9（经 mvnw wrapper）· Redisson ≥4.x（Redis 场景）；无 Redis 场景缓存用 Caffeine（A.5.2 分节）· Testcontainers 集成测试（测试基建分节）· Docker Compose 单机部署（附录分节）
+> **入库记录**：2026-10-24 维护者收录（内置路径），来源 img-create 项目 backend-java 宪法（含 2026-10-18～20 多轮用户钉版条款）；同日 TallyHo 项目用户达标确认回写补入 A.5.2 Caffeine / 测试基建（Testcontainers）/ 附录 Compose 部署三组分节（剥离项目专属细节）
+> **槽位覆盖**：A.1 / A.2 / A.3 / A.4（A.4.1–A.4.3）/ A.5（A.5.1 Redis · A.5.2 Caffeine）/ A.7 / C.3 目录职责骨架 / C.4 / 测试基建 / 附录部署；A.6 引用全局注释 / 日志 / 测试规范不入库。CI 构建配置段见 [ci/java.md](../ci/java.md)。
 
 ## A.1 编码约束
 
@@ -69,12 +69,43 @@
 
 ## A.5 基础设施生命周期
 
+### A.5.1 Redis 场景（Redisson / Spring Data Redis）
+
 - Redis 访问统一收敛基础设施封装：Stream 操作 / 分布式锁 / 注册校验用 Redisson，简单缓存用 Spring Data Redis；业务代码禁散操裸客户端
 - Redis Lua 脚本一律 resources/lua/ 文件承载（一功能一文件、KEYS/ARGV 显式传参），禁 Java 代码内嵌字符串 Lua；调用统一预注册单例工具包 evalsha（NOSCRIPT 自动重载）（2026-10-20 用户钉版）
 - 缓存分轨：简单缓存一律 Spring Cache 注解；复杂业务缓存（Lua 原子操作、多键协同）按领域抽取单一具体类 `{领域}Cache`（不做接口 / 实现分离、不套 IService 层级），禁业务 service 内散写 Redis 命令；领域缓存允许只读回源，禁经其写库
 - 与他端共享的 Redis 键 / Stream 命名以契约文档为唯一契约，变更双侧评审、先记 CHANGELOG
 - 多前缀域多 SecurityFilterChain 时，各链匹配边界与 order 必须显式声明，禁隐式叠加；JWT 一律非对称签发（RS256 / ES256），私钥仅签发方持有、公钥分发验签，密钥经环境注入支持轮换
 - 生产启用 `server.shutdown=graceful` + shutdown-phase 超时；Actuator + micrometer 指标为运行时观测基线，暴露端点范围与 security 联动收敛
+
+### A.5.2 Caffeine 场景（无 Redis，进程内缓存）
+
+- 缓存分轨：简单键值读缓存一律 Spring Cache 注解（@Cacheable / @CacheEvict）；需加载器单飞、多键协同、统计观测的复杂缓存用 Caffeine 原生 API，收敛为 cache/ 包单一具体类（不做接口 / 实现分离），禁业务 service 内散写缓存 API
+- 注解侧 CacheManager 统一配置：全部注解缓存经单一 CaffeineCacheManager Bean 集中声明（按 cacheName 差异化 TTL / 容量），禁业务代码散建 Cache 实例、禁散装 new Caffeine
+- TTL 强制：缓存必须显式过期（注解侧 cacheName 级配置，原生侧 expireAfterWrite），禁永不过期条目；TTL 与业务可容忍 stale 程度对应
+- 失效纪律（防脏缓存核心）：数据变更路径必须失效对应缓存；**Spring Cache 注解不与事务协调**——@Cacheable / @CachePut 禁置于含写事务的方法（防回滚后留脏缓存），读缓存方法与写方法分离，写路径「事务提交后失效」（@CacheEvict 置于写事务方法之上，方法成功返回后执行驱逐）
+- 防穿透：查询可能不存在的键必须防穿透——注解侧默认缓存 null + 短 TTL；原生 LoadingCache 的 loader 返回 null 不缓存，须改哨兵值或注解侧承载
+- 防击穿（单飞）：热点键并发回源必须单飞——注解侧 `@Cacheable(sync=true)`；原生侧 LoadingCache.get 天然单飞
+- 缓存键规范：注解侧必须显式 SpEL key（多参禁依赖 SimpleKeyGenerator 隐式复合键）；原生侧键对象必须不可变且正确实现 equals / hashCode
+- 代理陷阱：缓存注解基于动态代理，同类自调用不触发、非 public 方法无效且不报错——缓存方法必须经跨 bean 调用进入（与 @Transactional 自调用陷阱并列遵守）
+- 禁缓存高频写数据：高频写列表禁加缓存（失效与回源成本倒挂）；仅缓存低频变更数据
+- 观测：Caffeine recordStats 经 Micrometer 暴露，生产按配置开关（默认关闭）
+
+## 测试基建（Testcontainers + PostgreSQL）
+
+- PG 容器全测试套件共享单例：Spring bean 方式管理（`@Bean @ServiceConnection`，先于全部 bean 启动、最后停止，上下文缓存安全）；禁混用 JUnit @Container 与 ApplicationContext 缓存（已停容器导致后续测试失败，官方警告）
+- 连接注入一律 @ServiceConnection（生成的 ConnectionDetails 优先于任何连接配置属性）；仅未覆盖的特殊属性用 @DynamicPropertySource 补充
+- 测试分级：单元 / 切片测试（@WebMvcTest + MockMvc、纯 Service 单测，不起容器）与集成测试（@SpringBootTest + Testcontainers）分级，日常快跑切片、慢层全量
+- 测试 PG 镜像版本与生产部署对齐，禁 latest；测试数据清理策略统一（每方法事务回滚或 @Sql 显意数据），禁测试间隐式共享状态、禁依赖执行顺序
+- Testcontainers 依赖 Docker 环境：CI 合干层起容器前先探测 docker 可用性，缺失时明确报错指引（禁晦涩失败）
+
+## 附录 · Docker Compose 单机部署
+
+- 多阶段构建强制：builder 阶段 `java -Djarmode=tools -jar app.jar extract --layers` 解包分层，runtime 阶段仅 JRE + 按 dependencies → spring-boot-loader → snapshot-dependencies → application 顺序 COPY；禁直接 COPY uber jar 作为最终镜像运行方式（性能开销 + 缓存不友好）
+- Java 25+ 启用 AOT cache 训练（`-XX:AOTCacheOutput` + `-Dspring.context.exit=onRefresh`，运行时 `-XX:AOTCache` 加载；Java ≤24 用 CDS）；基础镜像与 JDK 版本线一致，生产镜像禁 latest 标签
+- 数据库服务必须 healthcheck（如 pg_isready，interval/retries/timeout/start_period 五要素齐全），应用依赖 `depends_on.condition: service_healthy`；禁仅 service_started 弱依赖
+- 优雅停机链：应用 `server.shutdown=graceful` + 停机超时，Compose 服务 `stop_grace_period` ≥ 应用停机超时（SIGTERM 宽限期覆盖在途请求）
+- 敏感配置（数据库口令 / 密钥）一律运行期环境变量或 Compose secrets 注入，禁写入镜像层与明文编排文件；容器内 JVM 用相对内存参数（-XX:MaxRAMPercentage 一类）适配容器限额，禁固定 -Xmx 写死脱钩
 
 ## A.7 跨层数据对象与传参约束（本栈习语）
 

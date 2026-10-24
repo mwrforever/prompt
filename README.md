@@ -68,6 +68,12 @@ skills/session-handoff/
 ├── SKILL.md                  # 触发即封存：新建交接文档 + 新会话执行与续接加载纪律
 └── references/
     └── handoff-template.md   # 交接文档必含章节骨架，顶部「交接声明」不可省略
+
+prompt/                       # 独立 UI 提示词（原宪法内置 UI 四段律的外部化改编，每文件仅强制加载单一插件技能）
+├── README.md                 # 提示词清单、单技能强制加载纪律、串联顺序与渲染性能约束
+├── impeccable-UI方向裁决与终验.md     # @impeccable：产品经理视角定视觉方向蓝图 / 真实渲染目测三级定级终验
+├── ui-ux-pro-max-UI样式实现与施工.md  # @ui-ux-pro-max：依蓝图按全局样式实现规范取材施工
+└── taste-skill-UI细节极致打磨.md      # @taste-skill：字体 / 动效 / 组件细节逐项雕琢
 ```
 
 ## 新增技能（后续扩展）
