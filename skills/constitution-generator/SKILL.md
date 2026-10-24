@@ -50,7 +50,7 @@ description: 仅当用户显式调用 /constitution-generator（[claude|agent] �
 | ORM + 迁移 + 数据库 | 如 SQLAlchemy + Alembic + PostgreSQL | A.4 |
 | 缓存 + 消息队列 | 如 Redis + Stream | A.5 |
 | 架构 / agent 框架 | 如 LangGraph | Part B |
-| LLM / 媒体网关 | 如 litellm | B.4 |
+| LLM / 媒体网关 | 如 litellm | B.3 |
 | 前端框架 + UI 栈 | 如 Next.js + TS + Tailwind | 前端子宪法 A.1 / Part B / A.7 本栈习语 |
 | 构建 + 测试 | 如 uv / ruff / pytest / pre-commit | C.4 / C.6；共有门禁总则落定位层 |
 | 部署 / 容器（可选） | Docker / 编排 / 对象存储 | A.5 或附录 |

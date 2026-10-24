@@ -6,7 +6,7 @@
 
 - `data/stack/{技术栈}.md` —— 技术栈宪法条目：小写 kebab-case，主语言 / 运行时在前、框架在后（如 `python-fastapi.md`、`typescript-nextjs.md`、`go.md`）；独立基础设施主题（缓存 / 消息队列等跨栈组件）单独成文件并映射其宪法槽位（如 `redis-stream.md` → A.5）。
 - `data/ci/{语言}.md` —— CI 构建配置段条目：按语言唯一命名（如 `python.md`、`typescript.md`、`go.md`、`java.md`）；同语言多框架差异以条目内小节区分（如「构建（Next.js）」「构建（Vue）」），多 CI 平台分段（GitHub Actions / GitLab CI / Jenkins…）。
-- 库文件以本技能基准目录为根解析相对路径；`stack/`、`ci/` 目录随首个条目回写创建，查库时目录或文件不存在即按未命中处理。
+- 库文件以本技能基准目录为根解析相对路径；查库时目录或文件不存在即按未命中处理。
 
 ## 条目格式
 
@@ -23,12 +23,16 @@
 
 ## 条目索引
 
-初始为空——条目随技能使用增长：每次用户达标确认后回写新增（SKILL.md §六.9），本表由回写动作同步维护。
+条目随技能使用增长：用户达标确认后回写新增（SKILL.md §六.9）、维护者可内置收录（本仓库行为），本表由入库动作同步维护。首批条目 2026-10-24 自 img-create 项目宪法收录（含 2026-10-18～20 多轮用户钉版条款，项目专属内容已剥离）。
 
 | 类型 | 文件 | 适用范围 | 覆盖槽位 |
 |---|---|---|---|
-| stack | （暂无条目） | — | — |
-| ci | （暂无条目） | — | — |
+| stack | [java-springboot.md](stack/java-springboot.md) | Java ≥21 · Spring Boot ≥4.1 · MyBatis-Plus ≥3.5.17 · PostgreSQL ≥15 · Maven ≥3.9（Boot 3.x 未覆盖） | A.1–A.5 / A.7 / C.4（A.6 引全局不入库） |
+| stack | [python-fastapi.md](stack/python-fastapi.md) | CPython ≥3.13 · FastAPI ≥0.140 · SQLAlchemy 2.x async + asyncpg · redis-py ≥8 · uv · ruff · pytest | A.1–A.5 / A.7 / C.4 |
+| stack | [typescript-react.md](stack/typescript-react.md) | Node ≥24 · pnpm ≥12 · React ≥19 · TS strict · Vite ≥8 · TanStack Router/Query · vitest（UI 分节：Tailwind 4 + shadcn / antd 6） | A.1–A.3 / A.5 / A.7 / C.4（A.4 无 DB 省略） |
+| ci | [java.md](ci/java.md) | Maven/mvnw · Spotless · Surefire · springdoc spec 防漂移 · Flyway 号段校验 | 快层 / 慢层 / 合干层（本地双层 CI） |
+| ci | [python.md](ci/python.md) | uv · ruff · pytest marker 分层 · FastAPI spec 防漂移 | 同上 |
+| ci | [typescript.md](ci/typescript.md) | pnpm · eslint · prettier · vitest · gen:api 防漂移 | 同上 |
 
 ## 维护纪律
 
