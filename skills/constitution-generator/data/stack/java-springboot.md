@@ -2,7 +2,7 @@
 
 > **适用范围**：Java ≥21（条目按 JDK 25 LTS + Spring Boot 4.1 线沉淀，Boot 3.x 未覆盖即视为未命中）· Spring Boot ≥4.1 · MyBatis-Plus ≥3.5.17（spring-boot4-starter）· PostgreSQL ≥15 · Maven ≥3.9（经 mvnw wrapper）· Redisson ≥4.x（Redis 场景）；无 Redis 场景缓存用 Caffeine（A.5.2 分节）· Testcontainers 集成测试（测试基建分节）· Docker Compose 单机部署（附录分节）
 > **入库记录**：2026-10-24 维护者收录（内置路径），来源 img-create 项目 backend-java 宪法（含 2026-10-18～20 多轮用户钉版条款）；同日 TallyHo 项目用户达标确认回写补入 A.5.2 Caffeine / 测试基建（Testcontainers）/ 附录 Compose 部署三组分节（剥离项目专属细节）
-> **槽位覆盖**：A.1 / A.2 / A.3 / A.4（A.4.1–A.4.3）/ A.5（A.5.1 Redis · A.5.2 Caffeine）/ A.7 / C.3 目录职责骨架 / C.4 / 测试基建 / 附录部署；A.6 引用全局注释 / 日志 / 测试规范不入库。CI 构建配置段见 [ci/java.md](../ci/java.md)。
+> **槽位覆盖**：A.1 / A.2 / A.3 / A.4（A.4.1–A.4.3）/ A.5（A.5.1 Redis · A.5.2 Caffeine）/ A.7 / C.3 目录职责骨架 / C.4 / 测试基建 / 附录部署；A.6 无本项目额外约束（省略）。CI 构建配置段见 [ci/java.md](../ci/java.md)。
 
 ## A.1 编码约束
 

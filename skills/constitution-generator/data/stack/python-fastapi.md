@@ -2,7 +2,7 @@
 
 > **适用范围**：CPython ≥3.13 · FastAPI ≥0.140（0.143.3 实测）· uvicorn ≥0.54 · pydantic-settings ≥2.16 · SQLAlchemy 2.x（async ORM，2.1.5 实测）+ asyncpg ≥0.32 · redis-py ≥8（async 客户端）· httpx（AsyncClient）· uv ≥0.13 · ruff ≥0.17 · pytest ≥9
 > **入库记录**：2026-10-24 维护者收录（内置路径），来源 img-create 项目 backend-ai 宪法（含 2026-10-18～20 多轮用户钉版条款）
-> **槽位覆盖**：A.1 / A.2 / A.3 / A.4 / A.5 / A.7 / C.3 目录职责骨架 / C.4；Part B（agent 编排 / LLM 网关 / 技能系统）属项目架构主题不收录；A.6 引用全局注释 / 日志 / 测试规范不入库。CI 构建配置段见 [ci/python.md](../ci/python.md)。
+> **槽位覆盖**：A.1 / A.2 / A.3 / A.4 / A.5 / A.7 / C.3 目录职责骨架 / C.4；Part B（agent 编排 / LLM 网关 / 技能系统）属项目架构主题不收录；A.6 无本项目额外约束（省略）。CI 构建配置段见 [ci/python.md](../ci/python.md)。
 
 ## A.1 编码约束
 

@@ -27,10 +27,10 @@
 
 | 类型 | 文件 | 适用范围 | 覆盖槽位 |
 |---|---|---|---|
-| stack | [java-springboot.md](stack/java-springboot.md) | Java ≥21 · Spring Boot ≥4.1 · MyBatis-Plus ≥3.5.17 · PostgreSQL ≥15 · Maven ≥3.9（Boot 3.x 未覆盖）；Redis 场景（Redisson）+ 无 Redis 场景（Caffeine A.5.2）+ Testcontainers 测试基建 + Compose 部署附录 | A.1–A.5（A.5.1/A.5.2）/ A.7 / C.3 / C.4 / 测试基建 / 附录部署（A.6 引全局不入库） |
+| stack | [java-springboot.md](stack/java-springboot.md) | Java ≥21 · Spring Boot ≥4.1 · MyBatis-Plus ≥3.5.17 · PostgreSQL ≥15 · Maven ≥3.9（Boot 3.x 未覆盖）；Redis 场景（Redisson）+ 无 Redis 场景（Caffeine A.5.2）+ Testcontainers 测试基建 + Compose 部署附录 | A.1–A.5（A.5.1/A.5.2）/ A.7 / C.3 / C.4 / 测试基建 / 附录部署（A.6 无额外约束省略） |
 | stack | [python-fastapi.md](stack/python-fastapi.md) | CPython ≥3.13 · FastAPI ≥0.140 · SQLAlchemy 2.x async + asyncpg · redis-py ≥8 · uv · ruff · pytest | A.1–A.5 / A.7 / C.3 / C.4 |
 | stack | [typescript-react.md](stack/typescript-react.md) | Node ≥24 · pnpm ≥12 · React ≥19 · TS strict · Vite ≥8 · TanStack Router/Query · vitest（UI 分节：Tailwind 4 + shadcn / antd 6） | A.1–A.3 / A.5 / A.7 / C.4（A.4 无 DB 省略） |
-| stack | [typescript-miniprogram.md](stack/typescript-miniprogram.md) | 微信原生小程序 · TypeScript strict · TDesign ≥2.12.0 线 · echarts-for-weixin（canvas 2d）· npm（pnpm 布局约束见条目）· 基础库按依赖综合取值（隐私 ≥2.32.3） | A.1 / A.2 / A.3 / A.5 / A.7 / C.3 / C.4 + 附加分节（隐私授权 / 广告 / 敏感词扫描）（A.4 无 DB 省略，A.6 引全局不入库） |
+| stack | [typescript-miniprogram.md](stack/typescript-miniprogram.md) | 微信原生小程序 · TypeScript strict · TDesign ≥2.12.0 线 · echarts-for-weixin（canvas 2d）· npm（pnpm 布局约束见条目）· 基础库按依赖综合取值（隐私 ≥2.32.3） | A.1 / A.2 / A.3 / A.5 / A.7 / C.3 / C.4 + 附加分节（隐私授权 / 广告 / 敏感词扫描）（A.4 无 DB 省略，A.6 无额外约束省略） |
 | ci | [java.md](ci/java.md) | Maven/mvnw · Spotless · Surefire · springdoc spec 防漂移 · Flyway 号段校验 · Testcontainers（合干层探测） | 快层 / 慢层 / 合干层（本地双层 CI） |
 | ci | [python.md](ci/python.md) | uv · ruff · pytest marker 分层 · FastAPI spec 防漂移 | 同上 |
 | ci | [typescript.md](ci/typescript.md) | pnpm · eslint · prettier · vitest · gen:api 防漂移；含「微信原生小程序（npm）」小节（tsc --noEmit 独立门禁 / 构建 npm 非空校验 / 敏感词扫描 / miniprogram-ci 纪律） | 同上 |
